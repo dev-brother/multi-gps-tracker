@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset=utf-8>
+<title>android-gps-tracker</title>
+
+<!-- OpenStreetMap + Leaflet.js version -->
+<link rel="stylesheet" href="Leaflet/dist/leaflet.css" />
+<script src="Leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+<?php
+
+
+//$id = "001";
+
+//	if ($id == "001") $name = "Lee";
+//	if ($id == "002") $name = "Ron";
+//	if ($id == "003") $name = "Joe";
+
+	
+echo "<h1>Who was here on <span id="date">…</span></h1>";
+?>	
+
+<h2>android-gps-tracker</h2>
+
+<p>(last known position where I had a GPS signal, a network connection, and some battery power)</p>
+
+<div class="list-row">
+ 
+    <div class="list-left">
+    
+	<div id="openstreetmap" style="width: 100%; height: 100%">
+	    <div id="interlude" style="text-align: center; line-height: 400px; font-weight: bold; border: 1px dotted grey; background-color: #eee;">
+				Map currently unavailable.
+	    </div>
+	</div>
+    </div>
+ 
+    <div class="list-right">
+	<div class="list-title">
+		KEY<br>
+		<hr>
+		<img src="images/red.png"> Lee<br>
+		<img src="images/green.png"> Ron<br>
+		<img src="images/blue.png"> Joe<br>	
+	</div>
+          <div class="list-filters">
+	  
+	  
+	  
+
+        </div>
+    </div>
+</div>
+
+
+	
+	
+		
+    
+    
+
+
+
+			
+
+			
+
+<script>
+
+var osmap, osmarker;
+var marker = [[0],[0],[0],];
+var icon = [[0],[0],[0],];
+var dte, lat, lon, utc, id, i;
+
+icon[0] = L.icon({
+    iconUrl: 'images/red.png',
+    iconRetinaUrl: 'images/red.png',
+    iconSize: [25,41],
+    iconAnchor: [22, 94],
+    popupAnchor: [-3, -76],
+   // shadowUrl: 'my-icon-shadow.png',
+   // shadowRetinaUrl: 'my-icon-shadow@2x.png',
+    //shadowSize: [68, 95],
+    //shadowAnchor: [22, 94]
+});
+
+icon[1]  = L.icon({
+    iconUrl: 'images/green.png',
+    iconRetinaUrl: 'images/green.png',
+    iconSize: [25,41],
+    iconAnchor: [22, 94],
+    popupAnchor: [-3, -76],
+   // shadowUrl: 'my-icon-shadow.png',
+   // shadowRetinaUrl: 'my-icon-shadow@2x.png',
+    //shadowSize: [68, 95],
+    //shadowAnchor: [22, 94]
+});
+
+icon[2]  = L.icon({
+    iconUrl: 'images/blue.png',
+    iconRetinaUrl: 'images/blue.png',
+    iconSize: [25,41],
+    iconAnchor: [22, 94],
+    popupAnchor: [-3, -76],
+   // shadowUrl: 'my-icon-shadow.png',
+   // shadowRetinaUrl: 'my-icon-shadow@2x.png',
+    //shadowSize: [68, 95],
+   // shadowAnchor: [22, 94]
+});
+
+
+//initial test values
+var planes = [
+//~ 		[1,"lee",-34.9,22.2201],
+//~ 		[2,"ron",-34.8,22.2202],
+//~ 		[3,"joe",-34.7,22.2203],
+
+		[0,"lee",-34.005099,22.392963],
+		[1,"ron",-34.006099,22.393963],
+		[2,"joe",-34.007099,22.394963],
+		];
+
+		//[001,"lee",-34.205099,22.272963],
+		//[002,"ron",-34.105099,22.372963],
+		//[003,"joe",-33.905099,22.472963],
+		
+
+
+function createOSMap() {
+    osmap = L.map('openstreetmap').setView([lat, lon], 12);
+
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(osmap);
+    
+    getLog();
+
+   // osmarker = L.marker([lat, lon]);
+
+    //osmarker
+        //.addTo(osmap)
+       // .bindPopup("<p>GPS coordinates :</p><p>" + lat + ", " + lon + "</p>");
+	
+	for (i = 0; i < planes.length; i++) {
+		marker[i] = new L.marker([planes[i][2],planes[i][3]],{icon: icon[i]});
+			//marker[i]({icon: greenIcon});
+			marker[i].bindPopup("id: " + planes[i][0] + " - user: " + planes[i][1] + "<p>GPS coordinates :</p><p>" + planes[i][2] + ", " + planes[i][3] + "</p>");
+			marker[i].addTo(osmap);
+		}
+	
+	
+}
+
+
+
+function updateOSMap() {
+    //osmarker.setLatLng([lat, lon]);
+    //osmarker.bindPopup("<p>GPS coordinates :</p><p>" + lat + ", " + lon + "</p>");
+    //osmap.panTo([lat, lon]);
+    
+    //window.alert(id);
+  
+    
+	for (i = 0; i < planes.length; i++) {
+	   // window.alert(planes[i][2] );
+		//planes[i][1]++;
+		//planes[i][2]]--;
+		if (id == i){	
+			marker[i].setLatLng([planes[i][2] ,planes[i][3]]);
+			marker[i].bindPopup("id: " + planes[i][0] + " - user: " + planes[i][1] + "<p>GPS coordinates :</p><p>" + planes[i][2] + ", " + planes[i][3] + "</p>");
+			marker[i].addTo(osmap);
+		}
+					
+	}
+}
+
+
+//sword - added function to iterate through history - get last position of all devices
+function getLog(){
+
+var lastmarker = [[0],[0],[0],];
+
+	var txtFile = new XMLHttpRequest();
+	txtFile.open("GET", "gps-history.log", true);
+	txtFile.onreadystatechange = function()
+	{
+		if (txtFile.readyState == 4) {  // document is ready to parse.
+		//window.alert("parse ok");
+		if (txtFile.status == 200) {  // file is found
+		// window.alert("file found");
+	    
+	    
+		allText = txtFile.responseText; 
+		//window.alert(allText);
+		 lines = txtFile.responseText.split("\n");
+		 
+		 for( i = 0; i < lines.length; i++){ 
+			//console.log(lines[i]); 
+			//window.alert(lines[i]); 
+			//window.alert(lines);
+		
+			//var param = txtFile.responseText.split('_');
+			var param = lines[i].split('_');
+			
+			dte = param[0];
+			lat = param[1];
+			lon = param[2];
+			utc = param[3];
+			id = param[4];
+			
+			// window.alert(id + " : " + lat + " : " + lon);
+			 //window.alert(lon);
+			 
+			 
+ 			for (var j = 0; j < 3; j++) {
+			
+				if (id == j ){
+					planes[j][0] = id;
+					planes[j][2] = lat;
+					planes[j][3] = lon;
+					
+					//window.alert(planes[j][0]);
+				}
+ 			}	
+		}
+		
+		// lines = txtFile.responseText.split("\n");
+		}
+		}
+	}
+	txtFile.send(null);
+}
+
+function doRefresh() {
+    var xhr;
+    try {
+        xhr = new XMLHttpRequest();
+    } catch (e) {
+        xhr = false;
+    }
+
+    xhr.onreadystatechange  = function() {
+        if (xhr.readyState  == 4) {
+            if (xhr.status  == 200) {
+                var param = xhr.responseText.split('_');
+                dte = param[0];
+                lat = param[1];
+                lon = param[2];
+                utc = param[3];
+	    id = param[4];
+	    
+	      //window.alert(id);
+		
+                if (dte && lat && lon) {
+                   
+                    if (!osmap) {
+                        createOSMap();
+                    } else {
+                        updateOSMap();
+                    }
+                    if (utc) {
+                        utc_dte = new Date(parseInt(utc));
+                        document.querySelector("#date").innerHTML = utc_dte.toLocaleString();
+                    } else {
+                        document.querySelector("#date").innerHTML = dte + " (server time)";
+                    }
+                }
+            }
+        }
+    };
+    xhr.open("GET", "gps-get-last-call.php?" + Math.random(),  true);
+    xhr.send(null);
+    setTimeout('doRefresh()', 5000);
+}
+
+doRefresh();
+
+</script>
+
+
+
+</body>
+</html>
+
