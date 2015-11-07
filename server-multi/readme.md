@@ -2,8 +2,8 @@ the-peoples-gps-tracker
 ==================
 a gps tracker by the people for the people
 
-device = android
-server = php
+* device = android
+* server = php
 
 Contributions welcome in iphone code, blackberry, winphone.
 
@@ -12,9 +12,9 @@ Roadmap
 
 3 levels of complexity
 
-*phase 1 - php only mode
-*phase 2 - sqlite mode
-*phase 3 - mysql mode
+* phase 1 - php only mode
+* phase 2 - sqlite mode
+* phase 3 - mysql mode
 
 This project is still in heavy dev
 ========================
