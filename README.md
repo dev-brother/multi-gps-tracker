@@ -5,10 +5,10 @@ This project is currently in heavy rework. It looks like this will be a full spl
 
 Major issues currently being reworked.
 
-* Secure login
-* Multiple devices management on server
-* Sqlite for fast rollout - drop and run
-* Rework android app for device id
-* Rework android ui for extended functionality
-* Separate the server project code from the android project code
-* Full project rename to PunchButton © Leon Franken 2014/2015
+* Secure login.
+* Multiple devices management on server.
+* Sqlite for fast rollout - drop and run.
+* Rework android app for device id.
+* Rework android ui for extended functionality.
+* Separate the server project code from the android project code.
+* Full project rename to PunchButton.
